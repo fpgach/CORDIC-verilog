@@ -86,29 +86,23 @@ void calc_cordic(int& re, int& im, int module, int angle) {
     int tmp;
 
 
+    if(quad == 0) {
+        re = Re[N-1];
+        im = Im[N-1];
+    }
     if(quad == 1) {
-        tmp = Re[N-1];
-        Re[N-1] = -Im[N-1];
-        Im[N-1] = tmp;
+        re = -Im[N-1];
+        im = Re[N-1];
     }
     if(quad == 2) {
-        tmp = Re[N-1];
-        Re[N-1] = -Re[N-1];
-        Im[N-1] = -Im[N-1];
+        re = -Re[N-1];
+        im = -Im[N-1];
     }
     if(quad == 3) {
-        tmp = Re[N-1];
-        Re[N-1] = Im[N-1];
-        Im[N-1] = -tmp;
+        re = Im[N-1];
+        im = -Re[N-1];
     }
 
-    int tmp_cos = Re[N-1] - icos;
-        tmp_cos = tmp_cos < 0 ? -tmp_cos : tmp_cos;
-    int tmp_sin = Im[N-1] - isin;
-        tmp_sin = tmp_sin < 0 ? -tmp_sin : tmp_sin;
-
-    re = Re[N-1];
-    im = Im[N-1];
 
     //static int max_delta_cos = tmp_cos > max_delta_cos ? tmp_cos : max_delta_cos;
     //static int max_delta_sin = tmp_sin > max_delta_sin ? tmp_sin : max_delta_sin;
