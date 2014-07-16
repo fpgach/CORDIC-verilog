@@ -59,8 +59,14 @@ void calc_cordic(int& re, int& im, int module, int angle) {
     int tmp_Re = 0;
     int tmp_Im = 0;
     int tst = 0;
+    int tst_re[N];
+    int tst_im[N];
     for(int i = 1; i < N; i++) {
-        tmp_i = 1 << (i-1);
+        if(i > 8)
+            tmp_i = 1 << (i-1);
+        else
+            tmp_i = 0;
+
         if(ARG[i-1] > angle) {
             tmp_Im  =   Im[i-1] + tmp_i;
             tmp_Re  =   Re[i-1] + tmp_i;
@@ -75,6 +81,8 @@ void calc_cordic(int& re, int& im, int module, int angle) {
             Im[i]   =   Im[i-1] + (tmp_Re >> i);
             ARG[i]  =   ARG[i-1] + i_angle[i];
         }
+        //printf("%d\t%d\t%d\t\t\t%d\t%d\n",i, Re[i], Im[i], ARG[i], angle);
+
     }
 
     double mcos = cos(angle*PI/180);
@@ -122,8 +130,22 @@ int main() {
     int max_arg = 0;
     int disp_cos = 0;
     int disp_sin = 0;
+    double my_val = 0;
+/*
+    calc_cordic(Re, Im, 8191, 10260);
+    double  my_angle = 10260*360.0/(1<<ARG_MSB);
+    int     my_modul = 1 << (AMP_MSB-1);
+    double mcos = cos(my_angle*PI/180);
+    double msin = sin(my_angle*PI/180);
 
- //   calc_cordic(Re, Im, 8191, 1001);
+    int icos = mcos*(my_modul);
+    int isin = msin*(my_modul);
+    tmp_cos = Re - icos;
+    tmp_sin = Im - isin;
+    //max_arg = abs(tmp_cos) > abs(max_delta_re) ? i : max_arg;
+    max_delta_re = abs(tmp_cos) > abs(max_delta_re) ? tmp_cos : max_delta_re;
+    max_delta_im = abs(tmp_sin) > abs(max_delta_im) ? tmp_sin : max_delta_im;
+*/
 
     for(int i = 0; i < (1<<ARG_MSB); i++) {
         double  my_angle = (double)i*360.0/(1<<ARG_MSB);
@@ -141,22 +163,28 @@ int main() {
         tmp_cos = Re - icos;
         tmp_sin = Im - isin;
 
-        cos_delta_file << Re << endl;
-        sin_delta_file << Im << endl;
+        cos_delta_file << tmp_cos << endl;
+        sin_delta_file << tmp_sin << endl;
 
         //printf("\t%d\t%d\t%d\t%d\n",icos, isin, tmp_cos, tmp_sin);
         console << tmp_cos <<  endl;//"\t" << tmp_sin<< endl;// << "\t" << tmp_sin << "\t" << endl;
+        max_arg = abs(tmp_cos) > abs(max_delta_re) ? i : max_arg;
         max_delta_re = abs(tmp_cos) > abs(max_delta_re) ? tmp_cos : max_delta_re;
         max_delta_im = abs(tmp_sin) > abs(max_delta_im) ? tmp_sin : max_delta_im;
+
+        my_val += abs(tmp_cos);
 
         disp_cos += tmp_cos;
         disp_sin += tmp_sin;
 
     }
 
-    printf("\n%d\t%d\n", max_delta_re, max_delta_im);
-    printf("\n%d\t%d\n", disp_cos, disp_sin);
+    my_val /= (1<<ARG_MSB);
 
+    //printf("\n%d\t%d\n", icos, isin);
+    printf("\n%d\t%d\n", max_delta_re, max_delta_im);
+    printf("\n%d\t%d\t\t%d\n", disp_cos, disp_sin, max_arg);
+    printf("%f\n", my_val);
     console.close();
     cos_delta_file.close();
     sin_delta_file.close();

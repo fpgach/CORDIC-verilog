@@ -23,8 +23,8 @@ genvar i;
 generate
     for(i = 1; i < N; i = i + 1)
     begin: shift
-        assign w_Re[i-1] = (Im[i-1] + (14'sd1 <<< (i-1))) >>> (i);
-        assign w_Im[i-1] = (Re[i-1] + (14'sd1 <<< (i-1))) >>> (i);
+        assign w_Re[i-1] = i > 8 ? (Im[i-1] + (14'sd1 <<< (i-1))) >>> (i) : Im[i-1] >>> (i);
+        assign w_Im[i-1] = i > 8 ? (Re[i-1] + (14'sd1 <<< (i-1))) >>> (i) : Re[i-1] >>> (i);
     end
 endgenerate
 
