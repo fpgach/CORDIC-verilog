@@ -9,6 +9,7 @@ wire    signed [13:0]  Im_out;
 main uut(
     .clk(clk),
     .arg(arg),
+    //.arg(20004),
     .Re_out(Re_out),
     .Im_out(Im_out)
 );
@@ -56,7 +57,7 @@ initial begin
     Re = $fopen("Re.txt", "w");
     Im = $fopen("Im.txt", "w");
     Arg= $fopen("Arg.txt", "w");
-    while(targ != 131071)
+    while(delay_arg[13] != 65536)
     begin
 
         $fwrite(Re, "%d\n", Re_out);
